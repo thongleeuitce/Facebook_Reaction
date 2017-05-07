@@ -10,6 +10,6 @@
     <com.example.thongle.facebook_reaction.ReactionView
         android:id="@+id/reaction_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="250dp" />
 
 </LinearLayout>

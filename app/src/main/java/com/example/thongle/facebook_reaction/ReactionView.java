@@ -6,10 +6,12 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -17,11 +19,19 @@ import java.util.ArrayList;
  * Created by thongle on 05/05/2017.
  */
 
-public class ReactionView extends View{
+public class ReactionView extends View {
+
+    enum States {
+        BEGIN,
+        NORMAL,
+        CHOOSING,
+        END
+    }
 
     Context context;
     private ArrayList<Emotion> emotions;
     private Board board;
+    private States state;
 
     public static final long DURATION_ANIMATION = 200;
     public static final long DURATION_BEGINNING_EACH_ITEM = 300;
@@ -98,16 +108,94 @@ public class ReactionView extends View{
             emotions.get(i).drawEmotion(canvas);
         }
     }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        boolean handler = false;
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                handler = true;
+                break;
+            case  MotionEvent.ACTION_UP:
+                handler = true;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                for(int i = 0; i< 6; i++) {
+                    if (event.getX() > emotions.get(i).currentX && event.getX() < (emotions.get(i).currentX + emotions.get(i).currentSize)) {
+                        state = States.CHOOSING;
+                        emotion_selected(i);
+                        break;
+                    }
+                }
+                break;
+        }
+        return handler;
+    }
+
+    public void emotion_selected(int position){
+        if(currentPosition != position){
+            Log.v("selected", String.valueOf(position));
+            currentPosition = position;
+            startAnimation(new ChooseEmotionAnimation());
+        }
+
+    }
+
+    private void setvalues_beforeAnimateBeginning() {
+
+    }
+
+    private void setvalues_beforeAnimateChoosing() {
+        board.beginHeight = board.getCurrentHeight();
+        board.endHeight = board.BOARD_HEIGHT_MINIMAL;
+        for(int i = 0; i < 6; i++){
+            if(i == currentPosition){
+                emotions.get(i).beginSize = emotions.get(i).getCurrentSize();
+                emotions.get(i).endSize = Emotion.CHOOSE_SIZE;
+            }
+            else{
+                emotions.get(i).beginSize = emotions.get(i).getCurrentSize();
+                emotions.get(i).endSize = Emotion.MINIMAL_SIZE;
+            }
+        }
+    }
+
+    class ChooseEmotionAnimation extends Animation {
+        public ChooseEmotionAnimation() {
+            if(state == States.CHOOSING)
+                setvalues_beforeAnimateChoosing();
+            setDuration(DURATION_ANIMATION);
+        }
+
+        @Override
+        protected void applyTransformation(float interpolatedTime, Transformation t) {
+
+            // caculate size and coordinate X of Board and Emotions throught interpolated Time
+            super.applyTransformation(interpolatedTime, t);
+            board.setCurrentHeight(board.beginHeight + interpolatedTime*(board.endHeight - board.beginHeight));
+            for(int i = 0; i < 6; i++)
+                    emotions.get(i).setCurrentSize((int)(emotions.get(i).beginSize + interpolatedTime*(emotions.get(i).endSize - emotions.get(i).beginSize)));
+
+            // caculate Coodirnate Y of Emotions throught interpolated Time
+//            emotions.get(0).currentX = Board.BOARD_X + DIVIDE;
+//            emotions.get(5).currentX = Board.BOARD_X + Board.BOARD_WIDTH - DIVIDE - emotions.get(5).getCurrentSize();
+            for(int i = 1; i < 6; i++)
+                emotions.get(i).currentX = emotions.get(i - 1).currentX + emotions.get(i - 1).getCurrentSize() + DIVIDE;
+//            for(int i = 4; i > currentPosition; i--){
+//                emotions.get(i).currentX = emotions.get(i + 1).currentX - DIVIDE - emotions.get(i).getCurrentSize();
+//            }
+//            if (currentPosition != 0 && currentPosition != 5) {
+//                if (currentPosition <= 2) {
+//                    emotions.get(currentPosition).currentX = emotions.get(currentPosition-1).currentX + emotions.get(currentPosition-1).currentSize + DIVIDE;
+//                } else {
+//                    emotions.get(currentPosition).currentX = emotions.get(currentPosition+1).currentX - emotions.get(currentPosition).currentSize - DIVIDE;
+//                }
+//            }
+            invalidate();
+        }
+    }
 //
-//    private void beforeAnimateBeginning() {
-//
-//    }
-//
-//    private void beforeAnimateChoosing() {
-//
-//    }
-//
-//    private void beforeAnimateNormalBack() {
+//    private void setvalues_beforeAnimateNormalBack() {
 //
 //    }
 //
@@ -139,16 +227,7 @@ public class ReactionView extends View{
 //
 //    }
 //
-//    @Override
-//    public boolean onTouchEvent(MotionEvent event) {
 //
-//        return true;
-//    }
-//
-//    class ChooseEmotionAnimation extends Animation {
-//        public ChooseEmotionAnimation() {
-//
-//        }
 //
 //        @Override
 //        protected void applyTransformation(float interpolatedTime, Transformation t) {

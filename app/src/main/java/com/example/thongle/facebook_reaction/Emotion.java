@@ -13,6 +13,9 @@ import android.graphics.RectF;
 
 public class Emotion {
     private Context context;
+
+    private String title;
+
     public static final int MINIMAL_SIZE = ConvertDp2Px.dp_to_px(28);
     public static final int NORMAL_SIZE = ConvertDp2Px.dp_to_px(40);
     public static final int CHOOSE_SIZE = ConvertDp2Px.dp_to_px(100);
@@ -37,6 +40,7 @@ public class Emotion {
 
     public Emotion(Context context, String title, int imageResource) {
         this.context = context;
+        this.title = title;
 
         imageOrigin = BitmapFactory.decodeResource(context.getResources(), imageResource);
 
@@ -47,8 +51,19 @@ public class Emotion {
         titlePaint.setAntiAlias(true);
        // generateTitleView(title);
     }
+    public String getTitle() {
+        return title;
+    }
     public void drawEmotion(Canvas canvas) {
         canvas.drawBitmap(imageOrigin, null, new RectF(currentX, currentY, currentX + currentSize, currentY + currentSize), emotionPaint);
         //drawTitle(canvas);
+    }
+    public int getCurrentSize() {
+        return currentSize;
+    }
+
+    public void setCurrentSize(int currentSize) {
+        this.currentSize = currentSize;
+        this.currentY = Board.BASE_LINE - this.currentSize;
     }
 }
