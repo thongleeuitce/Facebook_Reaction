@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Facebook_Reaction</string>
+    <string name="like">Like</string>
+    <string name="love">Love</string>
+    <string name="haha">Haha</string>
+    <string name="wow">Wow</string>
+    <string name="cry">Cry</string>
+    <string name="angry">Angry</string>
 </resources>
