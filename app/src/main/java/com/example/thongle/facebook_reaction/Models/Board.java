@@ -1,10 +1,14 @@
-package com.example.thongle.facebook_reaction;
+package com.example.thongle.facebook_reaction.Models;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.Log;
+
+import com.example.thongle.facebook_reaction.Utils.ConvertDp2Px;
+import com.example.thongle.facebook_reaction.R;
+import com.example.thongle.facebook_reaction.ReactionView;
 
 /**
  * Created by thongle on 06/05/2017.

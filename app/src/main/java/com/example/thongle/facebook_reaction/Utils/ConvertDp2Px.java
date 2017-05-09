@@ -1,4 +1,4 @@
-package com.example.thongle.facebook_reaction;
+package com.example.thongle.facebook_reaction.Utils;
 
 import android.content.res.Resources;
 
